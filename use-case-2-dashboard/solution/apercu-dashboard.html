@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aperçu — dashboard Grafana bhs-controlroom</title>
+<title>Aperçu : dashboard Grafana bhs-controlroom</title>
 <link rel="icon" href="data:,">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -117,26 +117,26 @@
 </head>
 <body>
   <div class="caption">
-    Aperçu statique du dashboard Grafana <strong>bhs-controlroom</strong> — rendu kiosk 1920 × 1080, thème sombre,
+    Aperçu statique du dashboard Grafana <strong>bhs-controlroom</strong>, rendu kiosk 1920 × 1080, thème sombre,
     rafraîchissement 30 s. Données fictives reprises de l'énoncé. Fichier importable&nbsp;: <code>dashboard.json</code>.
   </div>
 
   <div class="stage" id="stage">
     <div class="screen" id="screen">
 
-      <!-- Bannière fraîcheur — SQL, requête n°4 de queries.sql -->
-      <div class="panel banner" title="Stat SQL (requête n°4) : OK / IDLE / DATA STALE — calcul côté serveur, indépendant de l'API et de l'horloge du TV">
+      <!-- Bannière fraîcheur : SQL, requête n°4 de queries.sql -->
+      <div class="panel banner" title="Stat SQL (requête n°4) : OK / IDLE / DATA STALE, calcul côté serveur, indépendant de l'API et de l'horloge du TV">
         <div class="value">DONNÉES À JOUR</div>
       </div>
 
       <!-- KPI : bagages dans le système -->
-      <div class="panel p-bags" title="GET /api/v1/status → bags_in_system — seuils 300 / 450">
+      <div class="panel p-bags" title="GET /api/v1/status → bags_in_system, seuils 300 / 450">
         <div class="panel-title">Bagages dans le système</div>
         <div class="panel-body"><div class="kpi-value green">142</div></div>
       </div>
 
       <!-- KPI : séjour moyen -->
-      <div class="panel p-dwell" title="GET /api/v1/status → avg_dwell_minutes — seuils 8 / 12 min">
+      <div class="panel p-dwell" title="GET /api/v1/status → avg_dwell_minutes, seuils 8 / 12 min">
         <div class="panel-title">Séjour moyen</div>
         <div class="panel-body">
           <div class="kpi-value green">4.2<span class="kpi-unit">min</span></div>
@@ -159,13 +159,13 @@
       </div>
 
       <!-- Dernière donnée API -->
-      <div class="panel p-api" title="GET /api/v1/status → last_update — signal secondaire, la bannière SQL fait foi">
+      <div class="panel p-api" title="GET /api/v1/status → last_update : signal secondaire, la bannière SQL fait foi">
         <div class="panel-title">Fraîcheur API</div>
         <div class="panel-body"><div class="kpi-value neutral">il y a quelques secondes</div></div>
       </div>
 
       <!-- Top 5 bloqués -->
-      <div class="panel p-table" title="GET /api/v1/bags/stuck?threshold_minutes=15 — tri par entrée, rouge ≥ 30 min, estompé ≥ 120 min (fantôme probable)">
+      <div class="panel p-table" title="GET /api/v1/bags/stuck?threshold_minutes=15 : tri par entrée, rouge ≥ 30 min, estompé ≥ 120 min (fantôme probable)">
         <div class="panel-title">Top 5 bagages bloqués (&gt; 15 min)</div>
         <div class="panel-body">
           <table>
@@ -203,8 +203,8 @@
       </div>
 
       <!-- Débit 24 h -->
-      <div class="panel p-chart" title="GET /api/v1/throughput?hours=24 — la barre de l'heure en cours (hachurée) est partielle">
-        <div class="panel-title">Débit — 24 dernières heures</div>
+      <div class="panel p-chart" title="GET /api/v1/throughput?hours=24 : la barre de l'heure en cours (hachurée) est partielle">
+        <div class="panel-title">Débit des 24 dernières heures</div>
         <div class="panel-body">
           <svg viewBox="0 0 860 372" preserveAspectRatio="none" role="img"
                aria-label="Débit horaire des bagages sur 24 heures">
@@ -217,30 +217,30 @@
             <text class="axis-label" x="42" y="149" text-anchor="end">1000</text>
             <text class="axis-label" x="42" y="54"  text-anchor="end">1500</text>
 
-            <rect class="bar" x="56.6"  y="126" width="20" height="210"><title>11:00 — 1102</title></rect>
-            <rect class="bar" x="89.8"  y="78"  width="20" height="258"><title>12:00 — 1356</title></rect>
-            <rect class="bar" x="123.0" y="52"  width="20" height="284"><title>13:00 — 1489</title></rect>
-            <rect class="bar" x="156.1" y="27"  width="20" height="309"><title>14:00 — 1623</title></rect>
-            <rect class="bar" x="189.3" y="44"  width="20" height="292"><title>15:00 — 1534</title></rect>
-            <rect class="bar" x="222.5" y="61"  width="20" height="275"><title>16:00 — 1445</title></rect>
-            <rect class="bar" x="255.6" y="94"  width="20" height="242"><title>17:00 — 1267</title></rect>
-            <rect class="bar" x="288.8" y="122" width="20" height="214"><title>18:00 — 1123</title></rect>
-            <rect class="bar" x="322.0" y="148" width="20" height="188"><title>19:00 — 987</title></rect>
-            <rect class="bar" x="355.1" y="192" width="20" height="144"><title>20:00 — 756</title></rect>
-            <rect class="bar" x="388.3" y="232" width="20" height="104"><title>21:00 — 543</title></rect>
-            <rect class="bar" x="421.5" y="275" width="20" height="61"><title>22:00 — 321</title></rect>
-            <rect class="bar" x="454.6" y="298" width="20" height="38"><title>23:00 — 198</title></rect>
-            <rect class="bar" x="487.8" y="319" width="20" height="17"><title>00:00 — 87</title></rect>
-            <rect class="bar" x="521.0" y="327" width="20" height="9"><title>01:00 — 45</title></rect>
-            <rect class="bar" x="554.1" y="332" width="20" height="4"><title>02:00 — 23</title></rect>
-            <rect class="bar" x="587.3" y="334" width="20" height="2"><title>03:00 — 12</title></rect>
-            <rect class="bar" x="620.5" y="330" width="20" height="6"><title>04:00 — 34</title></rect>
-            <rect class="bar" x="653.6" y="306" width="20" height="30"><title>05:00 — 156</title></rect>
-            <rect class="bar" x="686.8" y="243" width="20" height="93"><title>06:00 — 489</title></rect>
-            <rect class="bar" x="720.0" y="169" width="20" height="167"><title>07:00 — 876</title></rect>
-            <rect class="bar" x="753.1" y="101" width="20" height="235"><title>08:00 — 1234</title></rect>
-            <rect class="bar" x="786.3" y="58"  width="20" height="278"><title>09:00 — 1456</title></rect>
-            <rect class="bar-partial" x="819.5" y="44" width="20" height="292"><title>10:00 — 1532 (heure en cours, partielle)</title></rect>
+            <rect class="bar" x="56.6"  y="126" width="20" height="210"><title>11:00 : 1102</title></rect>
+            <rect class="bar" x="89.8"  y="78"  width="20" height="258"><title>12:00 : 1356</title></rect>
+            <rect class="bar" x="123.0" y="52"  width="20" height="284"><title>13:00 : 1489</title></rect>
+            <rect class="bar" x="156.1" y="27"  width="20" height="309"><title>14:00 : 1623</title></rect>
+            <rect class="bar" x="189.3" y="44"  width="20" height="292"><title>15:00 : 1534</title></rect>
+            <rect class="bar" x="222.5" y="61"  width="20" height="275"><title>16:00 : 1445</title></rect>
+            <rect class="bar" x="255.6" y="94"  width="20" height="242"><title>17:00 : 1267</title></rect>
+            <rect class="bar" x="288.8" y="122" width="20" height="214"><title>18:00 : 1123</title></rect>
+            <rect class="bar" x="322.0" y="148" width="20" height="188"><title>19:00 : 987</title></rect>
+            <rect class="bar" x="355.1" y="192" width="20" height="144"><title>20:00 : 756</title></rect>
+            <rect class="bar" x="388.3" y="232" width="20" height="104"><title>21:00 : 543</title></rect>
+            <rect class="bar" x="421.5" y="275" width="20" height="61"><title>22:00 : 321</title></rect>
+            <rect class="bar" x="454.6" y="298" width="20" height="38"><title>23:00 : 198</title></rect>
+            <rect class="bar" x="487.8" y="319" width="20" height="17"><title>00:00 : 87</title></rect>
+            <rect class="bar" x="521.0" y="327" width="20" height="9"><title>01:00 : 45</title></rect>
+            <rect class="bar" x="554.1" y="332" width="20" height="4"><title>02:00 : 23</title></rect>
+            <rect class="bar" x="587.3" y="334" width="20" height="2"><title>03:00 : 12</title></rect>
+            <rect class="bar" x="620.5" y="330" width="20" height="6"><title>04:00 : 34</title></rect>
+            <rect class="bar" x="653.6" y="306" width="20" height="30"><title>05:00 : 156</title></rect>
+            <rect class="bar" x="686.8" y="243" width="20" height="93"><title>06:00 : 489</title></rect>
+            <rect class="bar" x="720.0" y="169" width="20" height="167"><title>07:00 : 876</title></rect>
+            <rect class="bar" x="753.1" y="101" width="20" height="235"><title>08:00 : 1234</title></rect>
+            <rect class="bar" x="786.3" y="58"  width="20" height="278"><title>09:00 : 1456</title></rect>
+            <rect class="bar-partial" x="819.5" y="44" width="20" height="292"><title>10:00 : 1532 (heure en cours, partielle)</title></rect>
 
             <text class="axis-label" x="99.8"  y="358" text-anchor="middle">12:00</text>
             <text class="axis-label" x="199.3" y="358" text-anchor="middle">15:00</text>

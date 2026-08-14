@@ -1,22 +1,28 @@
-# Use Case 1 — Le bagage fantôme
+# Use Case 1 : Le bagage fantôme
 
 ## Résumé
 
-La cause racine est l’utilisation d’un préfixe non unique comme clé du buffer : deux scans partageant leurs quatre premiers chiffres ne peuvent pas y coexister. Le second écrase silencieusement le premier avant sa persistance.
+La cause racine est l’utilisation d’un préfixe non unique comme clé du buffer : deux scans partageant leurs quatre premiers chiffres ne peuvent pas y coexister.
 
-Le correctif remplace ce dictionnaire par une liste d’événements, puis sécurise les flushs concurrents par un échange atomique du buffer, deux locks et une transaction SQLite. Les six tests automatisés passent. Les garanties de bout en bout — ACK RabbitMQ, idempotence et buffer durable — restent hors périmètre.
+Le second écrase silencieusement le premier avant sa persistance.
+
+Le correctif remplace ce dictionnaire par une liste d’événements, puis sécurise les flushs concurrents par un échange atomique du buffer, deux locks et une transaction SQLite.
+
+Les six tests automatisés passent. Les garanties de bout en bout (ACK RabbitMQ, idempotence et buffer durable) restent hors périmètre.
 
 ## Réflexions préalables et diagnostic
 
 Je donne le dossier à Claude desktop et je demande :
 
-Traduis en français l'énoncé et explique-moi, en développeur naïf du domaine en question, la problématique et les termes techniques (PLC ? BHS ? SC- ? Convoyeur ?) et l'architecture présentée.
+> Traduis en français l'énoncé et explique-moi, en développeur naïf du domaine en question, la problématique et les termes techniques (PLC ? BHS ? SC- ? Convoyeur ?) et l'architecture présentée.
 
 Je peux lire et comprendre en anglais, mais autant comprendre le problème dans ma langue maternelle, je serai aussi bien plus pertinent dans mes échanges avec l'IA générative.
 
 Cela dit, après avoir compris la problématique et l'architecture, ma première réflexion est celle-ci :
 
-L’incident concerne environ 5 bagages sur 15 000, soit près de 0,033 %. Il est donc rare, même si son impact opérationnel reste important puisqu’il peut conduire à des recherches manuelles et à des vols manqués. 
+L’incident concerne environ 5 bagages sur 15 000, soit près de 0,033 %.
+
+Il est donc rare, même si son impact opérationnel reste important puisqu’il peut conduire à des recherches manuelles et à des vols manqués.
 
 À ce stade, je ne dois pas conclure que le problème est forcément logiciel. Même dans un use case de développement, je me place en situation réelle : il pourrait aussi s’agir d’un problème physique, technique ou humain.
 
@@ -31,7 +37,9 @@ Les blocs contenant les bagages fantômes sont clairement mis en avant. Cependan
 # Only 10 flushed but 11 were received! Bag 8594031301 lost.
 ```
 
-Il y a 10 lignes de réception au-dessus de ce commentaire, pas 11. Si `8594031301` a été perdu, seuls 9 événements auraient dû être persistés. Les logs semblent donc illustratifs, incomplets ou issus d’une autre version. Je fonde la démonstration sur le code, les événements JSON et la reproduction locale.
+Il y a 10 lignes de réception au-dessus de ce commentaire, pas 11. Si `8594031301` a été perdu, seuls 9 événements auraient dû être persistés.
+
+Les logs semblent donc illustratifs, incomplets ou issus d’une autre version. Je fonde la démonstration sur le code, les événements JSON et la reproduction locale.
 
 Par contre, le message au-dessus de ces lignes me semble révélateur :
 
@@ -92,7 +100,7 @@ Total bags in database: 1
 
 Cela confirme le diagnostic : les trois tags partagent le préfixe `0123`, et un seul événement est conservé.
 
-[Schéma 1 — Root cause and correction](diagrams/01-root-cause-and-fix.md)
+[Schéma 1 : Root cause and correction](diagrams/01-root-cause-and-fix.md)
 
 Les analyses indépendantes de Claude et Codex aboutissent à la même cause. Elles signalent aussi d’autres risques que je vérifie avant d’en intégrer une partie au correctif.
 
@@ -136,7 +144,9 @@ Avec cette correction :
 
 ## Les autres points pris en compte
 
-Le remplacement du dictionnaire corrige la cause racine, mais le code original présente également un risque de race condition entre `_on_message()`, qui modifie le buffer, et le thread périodique qui exécute le flush.
+Le remplacement du dictionnaire corrige la cause racine.
+
+Mais le code original présente également un risque de race condition entre `_on_message()`, qui modifie le buffer, et le thread périodique qui exécute le flush.
 
 J’ai donc ajouté deux locks :
 
@@ -157,7 +167,7 @@ with self._pending_lock:
 
 Les nouveaux événements peuvent alors être placés dans la nouvelle liste pendant que l’ancien lot est écrit dans SQLite. Ils ne risquent plus d’être supprimés par un `clear()` tardif.
 
-[Schéma 2 — Atomic buffer swap and lock responsibilities](diagrams/02-atomic-buffer-swap-and-locks.md)
+[Schéma 2 : Atomic buffer swap and lock responsibilities](diagrams/02-atomic-buffer-swap-and-locks.md)
 
 Les insertions sont effectuées dans une transaction :
 
@@ -178,9 +188,9 @@ En cas d’échec, le lot est replacé devant les événements reçus entre-temp
 self._pending_events = events_to_flush + self._pending_events
 ```
 
-[Schéma 3 — SQLite transaction and buffer restoration](diagrams/03-transaction-and-buffer-restoration.md)
+[Schéma 3 : SQLite transaction and buffer restoration](diagrams/03-transaction-and-buffer-restoration.md)
 
-Enfin, `time.monotonic()` est utilisé pour mesurer le délai de cinq secondes, car ce compteur n’est pas affecté par une correction de l’horloge système — un `time.time()` reculant d’une heure au passage à l’heure d’hiver suspendrait les flushs périodiques d’autant.
+Enfin, `time.monotonic()` est utilisé pour mesurer le délai de cinq secondes, car ce compteur n’est pas affecté par une correction de l’horloge système. Un `time.time()` reculant d’une heure au passage à l’heure d’hiver suspendrait les flushs périodiques d’autant.
 
 ### Autres améliorations
 
@@ -223,7 +233,7 @@ Si le commit échoue, il faudrait émettre un NACK ou laisser le message être r
 
 RabbitMQ fournit normalement une livraison _at least once_. Un événement peut donc être livré plusieurs fois.
 
-Le `tag_id` ne suffit pas pour dédupliquer, car il identifie le bagage et non le scan. Il faudrait idéalement un `event_id` stable — par exemple un UUID produit à la source et conservé lors des redélivraisons — accompagné d’une contrainte d’unicité :
+Le `tag_id` ne suffit pas pour dédupliquer, car il identifie le bagage et non le scan. Il faudrait idéalement un `event_id` stable (par exemple un UUID produit à la source et conservé lors des redélivraisons) accompagné d’une contrainte d’unicité :
 
 ```
 CREATE UNIQUE INDEX idx_event_id
@@ -249,7 +259,9 @@ Le correctif arrête la consommation, signale le timer, puis effectue un dernier
 3. Mettre en place retry avec backoff.
 4. Utiliser un buffer durable si la perte lors d’un crash n’est pas acceptable.
 
-Le correctif résout la cause racine observée et sécurise les accès concurrents au buffer pendant le fonctionnement normal. Une garantie de bout en bout nécessiterait toutefois une coordination avec les acquittements RabbitMQ, un identifiant d’événement pour l’idempotence et éventuellement un buffer durable.
+Le correctif résout la cause racine observée et sécurise les accès concurrents au buffer pendant le fonctionnement normal.
+
+Une garantie de bout en bout nécessiterait toutefois une coordination avec les acquittements RabbitMQ, un identifiant d’événement pour l’idempotence et éventuellement un buffer durable.
 
 ## Plan de vérification
 
@@ -306,7 +318,9 @@ acceptés = persistés + en attente + en cours de flush
 
 Un écart durable aurait détecté directement le défaut original.
 
-C’est le meilleur compromis entre simplicité et efficacité. Sa limite est que les compteurs locaux repartent à zéro au redémarrage.
+C’est le meilleur compromis entre simplicité et efficacité.
+
+Sa limite est que les compteurs locaux repartent à zéro au redémarrage.
 
 ### Logs structurés
 
@@ -329,7 +343,9 @@ Elles détecteraient un consommateur arrêté ou trop lent, mais pas un événem
 
 La solution la plus fiable serait d’attribuer un `event_id` unique à chaque scan et de vérifier périodiquement sa présence dans SQLite.
 
-Cette option identifierait exactement chaque événement manquant et faciliterait l’idempotence. Son principal compromis est la complexité d’intégration : elle nécessite de modifier le contrat des messages, le schéma de la base et la supervision.
+Cette option identifierait exactement chaque événement manquant et faciliterait l’idempotence.
+
+Son principal compromis est la complexité d’intégration : elle nécessite de modifier le contrat des messages, le schéma de la base et la supervision.
 
 ### Alertes proposées
 

@@ -3,7 +3,7 @@
     {
       "name": "DS_BHS_API",
       "label": "BHS-API (Infinity)",
-      "description": "API REST BHS via plugin Infinity — parser backend obligatoire",
+      "description": "API REST BHS via plugin Infinity : parser backend obligatoire",
       "type": "datasource",
       "pluginId": "yesoreyeram-infinity-datasource",
       "pluginName": "Infinity"
@@ -83,7 +83,7 @@
       "id": 1,
       "type": "stat",
       "title": "",
-      "description": "Bannière de fraîcheur — portée par SQL (survit à une API morte comme à une API vivante servant des données figées). Calcul entièrement côté serveur.",
+      "description": "Bannière de fraîcheur, portée par SQL (survit à une API morte comme à une API vivante servant des données figées). Calcul entièrement côté serveur.",
       "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
       "datasource": { "type": "mssql", "uid": "${DS_BHS_SQL}" },
       "interval": "1m",
@@ -118,8 +118,8 @@
               "type": "value",
               "options": {
                 "OK": { "text": "DONNÉES À JOUR", "color": "green", "index": 0 },
-                "IDLE": { "text": "SYSTÈME AU REPOS — AUCUN BAGAGE ATTENDU", "color": "blue", "index": 1 },
-                "STALE": { "text": "DATA STALE — DONNÉES FIGÉES DEPUIS PLUS DE 5 MIN", "color": "red", "index": 2 }
+                "IDLE": { "text": "SYSTÈME AU REPOS : AUCUN BAGAGE ATTENDU", "color": "blue", "index": 1 },
+                "STALE": { "text": "DATA STALE : DONNÉES FIGÉES DEPUIS PLUS DE 5 MIN", "color": "red", "index": 2 }
               }
             }
           ],
@@ -127,7 +127,7 @@
             "mode": "absolute",
             "steps": [{ "color": "green", "value": null }]
           },
-          "noValue": "DATA STALE — SQL INJOIGNABLE"
+          "noValue": "DATA STALE : SQL INJOIGNABLE"
         },
         "overrides": []
       }
@@ -343,7 +343,7 @@
       "id": 5,
       "type": "stat",
       "title": "Fraîcheur API",
-      "description": "Signal secondaire — ne détecte un payload figé que si last_update horodate les données. La bannière SQL fait foi.",
+      "description": "Signal secondaire : ne détecte un payload figé que si last_update horodate les données. La bannière SQL fait foi.",
       "gridPos": { "h": 6, "w": 4, "x": 20, "y": 3 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "${DS_BHS_API}" },
       "pluginVersion": "9.5.15",
@@ -395,7 +395,7 @@
       "id": 6,
       "type": "table",
       "title": "Top 5 bagages bloqués (> 15 min)",
-      "description": "Au-delà de 120 min de séjour : probablement un fantôme (bug tracker, use case 1) — estompé, jamais masqué.",
+      "description": "Au-delà de 120 min de séjour : probablement un fantôme (bug tracker, use case 1) ; estompé, jamais masqué.",
       "gridPos": { "h": 7, "w": 12, "x": 0, "y": 9 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "${DS_BHS_API}" },
       "pluginVersion": "9.5.15",
@@ -530,7 +530,7 @@
     {
       "id": 7,
       "type": "barchart",
-      "title": "Débit — 24 dernières heures",
+      "title": "Débit des 24 dernières heures",
       "description": "La barre de l'heure en cours est partielle : une « chute » sur la dernière barre est normale.",
       "gridPos": { "h": 7, "w": 12, "x": 12, "y": 9 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "${DS_BHS_API}" },

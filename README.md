@@ -1,4 +1,4 @@
-# BHS Software Engineer — Technical Assessment
+# BHS Software Engineer: Technical Assessment
 
 **A note on language:** since the point is to explain my reasoning and my
 choices, the README of each of the two exercises is written in French.
@@ -10,18 +10,18 @@ that is where the approach lives.
 
 | Use case | Focus | Read |
 |---|---|---|
-| **1 — The Phantom Bag** | Debugging, root cause analysis, monitoring | **[use-case-1-phantom-bag/solution/README.md](use-case-1-phantom-bag/solution/README.md)** |
-| **2 — The Dashboard Request** | System design, integration, trade-offs | **[use-case-2-dashboard/solution/README.md](use-case-2-dashboard/solution/README.md)** |
+| **1: The Phantom Bag** | Debugging, root cause analysis, monitoring | **[use-case-1-phantom-bag/solution/README.md](use-case-1-phantom-bag/solution/README.md)** |
+| **2: The Dashboard Request** | System design, integration, trade-offs | **[use-case-2-dashboard/solution/README.md](use-case-2-dashboard/solution/README.md)** |
 
 In two sentences each, to set the scene:
 
-- **Use case 1** — The root cause is a non-unique buffer key: the first four
+- **Use case 1.** The root cause is a non-unique buffer key: the first four
   digits of the `tag_id` are used as a dictionary key, so two bags sharing that
   prefix cannot coexist and the second one silently overwrites the first. The
   fix replaces the dictionary with a list, then secures concurrent flushes
   (atomic buffer swap, two locks, SQLite transaction). Six automated tests cover
   the defect and the concurrency cases.
-- **Use case 2** — A dashboard added to the Grafana 9.5 instance already
+- **Use case 2.** A dashboard added to the Grafana 9.5 instance already
   deployed, fed by the REST API with SQL Server as a cross-check, and exposed to
   the Office VLAN through an nginx reverse proxy. No application built, nothing
   purchased, ~6 days out of the 10 allowed. The dashboard delivered here was

@@ -1,5 +1,5 @@
 -- ============================================================================
--- SQL control queries — fallback source and data-quality panels.
+-- SQL control queries: fallback source and data-quality panels.
 -- The REST API stays the primary source; these run in Grafana's MSSQL
 -- datasource, with svc_readonly.
 --
@@ -77,7 +77,7 @@ GROUP BY DATEADD(HOUR, DATEDIFF(HOUR, 0, first_seen), 0)
 ORDER BY hour_bucket;
 
 
--- 4. Freshness — drives the DATA STALE banner.
+-- 4. Freshness: drives the DATA STALE banner.
 --    IDLE keeps the banner quiet at night, when having no insert is normal.
 WITH last_insert AS (
     SELECT TOP 1 created_at          -- seek on the clustered PK, not a MAX() scan
@@ -107,7 +107,7 @@ CROSS JOIN active a;
 
 
 -- 5. Data health: probable phantoms (see use case 1).
---    Exact complement of query 1 — a bag is in one counter or the other, never both.
+--    Exact complement of query 1: a bag is in one counter or the other, never both.
 WITH last_state AS (
     SELECT tag_id, timestamp AS last_seen, status,
            ROW_NUMBER() OVER (PARTITION BY tag_id
