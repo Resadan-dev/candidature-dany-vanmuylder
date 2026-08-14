@@ -1,0 +1,196 @@
+2026-08-11 10:00:01.123 [INFO] Starting Bag Tracker Service v2.3.1
+2026-08-11 10:00:01.125 [INFO] Connected to message queue at mq.bru-bhs.local:5672
+2026-08-11 10:00:01.126 [INFO] Database initialized
+2026-08-11 10:00:01.127 [INFO] Listening for PLC events...
+2026-08-11 10:00:05.234 [INFO] Received scan: tag=1847293650 location=SC-101
+2026-08-11 10:00:05.456 [INFO] Received scan: tag=1847293651 location=SC-101
+2026-08-11 10:00:07.891 [INFO] Received scan: tag=1847293652 location=SC-102
+2026-08-11 10:00:12.334 [INFO] Received scan: tag=2938475610 location=SC-101
+2026-08-11 10:00:15.127 [INFO] Flushed 4 bags to database
+2026-08-11 10:00:18.445 [INFO] Received scan: tag=2938475611 location=SC-103
+2026-08-11 10:00:22.667 [INFO] Received scan: tag=3049586721 location=SC-101
+2026-08-11 10:00:25.127 [INFO] Flushed 2 bags to database
+2026-08-11 10:00:31.223 [INFO] Received scan: tag=3049586722 location=SC-102
+2026-08-11 10:00:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:00:42.891 [INFO] Received scan: tag=4150697832 location=SC-101
+2026-08-11 10:00:43.012 [INFO] Received scan: tag=4150697833 location=SC-101
+2026-08-11 10:00:45.127 [INFO] Flushed 2 bags to database
+2026-08-11 10:00:51.334 [INFO] Received scan: tag=5261708943 location=SC-102
+2026-08-11 10:00:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:01:02.445 [INFO] Received scan: tag=5261708944 location=SC-101
+2026-08-11 10:01:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:01:12.667 [INFO] Received scan: tag=6372819054 location=SC-103
+2026-08-11 10:01:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:01:22.891 [INFO] Received scan: tag=6372819055 location=SC-101
+2026-08-11 10:01:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:01:33.112 [INFO] Received scan: tag=7483920165 location=SC-102
+2026-08-11 10:01:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:01:42.334 [INFO] Received scan: tag=7483920166 location=SC-101
+2026-08-11 10:01:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:01:51.556 [INFO] Received scan: tag=8594031276 location=SC-101
+2026-08-11 10:01:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:02:03.778 [INFO] Received scan: tag=8594031277 location=SC-103
+2026-08-11 10:02:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:02:12.990 [INFO] Received scan: tag=9605142387 location=SC-102
+2026-08-11 10:02:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:02:23.112 [INFO] Received scan: tag=9605142388 location=SC-101
+2026-08-11 10:02:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:02:31.334 [INFO] Received scan: tag=0716253498 location=SC-101
+2026-08-11 10:02:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:02:42.556 [INFO] Received scan: tag=0716253499 location=SC-102
+2026-08-11 10:02:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:02:51.778 [INFO] Received scan: tag=1827364509 location=SC-103
+2026-08-11 10:02:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:03:02.990 [INFO] Received scan: tag=1827364500 location=SC-101
+2026-08-11 10:03:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:03:12.112 [INFO] Received scan: tag=2938475621 location=SC-102
+2026-08-11 10:03:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:03:23.334 [INFO] Received scan: tag=2938475622 location=SC-101
+2026-08-11 10:03:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:03:31.556 [INFO] Received scan: tag=3049586731 location=SC-103
+2026-08-11 10:03:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:03:42.778 [INFO] Received scan: tag=3049586732 location=SC-101
+2026-08-11 10:03:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:03:51.990 [INFO] Received scan: tag=4150697841 location=SC-102
+2026-08-11 10:03:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:04:03.112 [INFO] Received scan: tag=4150697842 location=SC-101
+2026-08-11 10:04:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:04:12.334 [INFO] Received scan: tag=5261708952 location=SC-103
+2026-08-11 10:04:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:04:23.556 [INFO] Received scan: tag=5261708953 location=SC-101
+2026-08-11 10:04:25.127 [INFO] Flushed 1 bags to database
+
+# ============ PEAK TRAFFIC PERIOD - MORNING RUSH ============
+2026-08-11 10:15:00.001 [INFO] Received scan: tag=6372819101 location=SC-101
+2026-08-11 10:15:00.023 [INFO] Received scan: tag=6372819102 location=SC-102
+2026-08-11 10:15:00.045 [INFO] Received scan: tag=6372819103 location=SC-101
+2026-08-11 10:15:00.067 [INFO] Received scan: tag=6372819104 location=SC-103
+2026-08-11 10:15:00.089 [INFO] Received scan: tag=6372819105 location=SC-102
+2026-08-11 10:15:00.111 [INFO] Received scan: tag=6372819106 location=SC-101
+2026-08-11 10:15:00.133 [INFO] Received scan: tag=6372819107 location=SC-103
+2026-08-11 10:15:00.155 [INFO] Received scan: tag=6372819108 location=SC-102
+2026-08-11 10:15:00.177 [INFO] Received scan: tag=6372819109 location=SC-101
+2026-08-11 10:15:00.199 [INFO] Received scan: tag=6372819110 location=SC-103
+2026-08-11 10:15:00.221 [INFO] Flushed 10 bags to database
+2026-08-11 10:15:00.334 [INFO] Received scan: tag=7483920201 location=SC-101
+2026-08-11 10:15:00.356 [INFO] Received scan: tag=7483920202 location=SC-102
+2026-08-11 10:15:00.378 [INFO] Received scan: tag=7483920203 location=SC-101
+2026-08-11 10:15:00.400 [INFO] Received scan: tag=7483920204 location=SC-103
+2026-08-11 10:15:00.422 [INFO] Received scan: tag=7483920205 location=SC-102
+2026-08-11 10:15:00.444 [INFO] Received scan: tag=7483920206 location=SC-101
+2026-08-11 10:15:00.466 [INFO] Received scan: tag=7483920207 location=SC-103
+2026-08-11 10:15:00.488 [INFO] Received scan: tag=7483920208 location=SC-102
+2026-08-11 10:15:00.510 [INFO] Received scan: tag=7483920209 location=SC-101
+2026-08-11 10:15:00.532 [INFO] Received scan: tag=7483920210 location=SC-103
+2026-08-11 10:15:00.554 [INFO] Flushed 10 bags to database
+
+# ============ PHANTOM BAG EVENT #1 ============
+# Note: Two bags with same prefix "8594" arrived within 5ms
+2026-08-11 10:22:14.112 [INFO] Received scan: tag=8594031301 location=SC-101
+2026-08-11 10:22:14.117 [INFO] Received scan: tag=8594031302 location=SC-102
+2026-08-11 10:22:14.234 [INFO] Received scan: tag=9605142401 location=SC-103
+2026-08-11 10:22:14.456 [INFO] Received scan: tag=0716253501 location=SC-101
+2026-08-11 10:22:14.678 [INFO] Received scan: tag=1827364601 location=SC-102
+2026-08-11 10:22:14.890 [INFO] Received scan: tag=2938475701 location=SC-103
+2026-08-11 10:22:15.112 [INFO] Received scan: tag=3049586801 location=SC-101
+2026-08-11 10:22:15.334 [INFO] Received scan: tag=4150697901 location=SC-102
+2026-08-11 10:22:15.556 [INFO] Received scan: tag=5261709001 location=SC-103
+2026-08-11 10:22:15.778 [INFO] Received scan: tag=6372820101 location=SC-101
+2026-08-11 10:22:15.800 [INFO] Flushed 10 bags to database
+# ^^^ Only 10 flushed but 11 were received! Bag 8594031301 lost.
+
+2026-08-11 10:22:23.112 [INFO] Received scan: tag=7483921201 location=SC-102
+2026-08-11 10:22:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:22:33.334 [INFO] Received scan: tag=8594032301 location=SC-103
+2026-08-11 10:22:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:22:42.556 [INFO] Received scan: tag=9605143401 location=SC-101
+2026-08-11 10:22:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:22:51.778 [INFO] Received scan: tag=0716254501 location=SC-102
+2026-08-11 10:22:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:23:02.990 [INFO] Received scan: tag=1827365601 location=SC-103
+2026-08-11 10:23:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:23:12.112 [INFO] Received scan: tag=2938476701 location=SC-101
+2026-08-11 10:23:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:23:23.334 [INFO] Received scan: tag=3049587801 location=SC-102
+2026-08-11 10:23:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:23:31.556 [INFO] Received scan: tag=4150698901 location=SC-103
+2026-08-11 10:23:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:23:42.778 [INFO] Received scan: tag=5261710001 location=SC-101
+2026-08-11 10:23:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:23:51.990 [INFO] Received scan: tag=6372821101 location=SC-102
+2026-08-11 10:23:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:24:03.112 [INFO] Received scan: tag=7483922201 location=SC-103
+2026-08-11 10:24:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:24:12.334 [INFO] Received scan: tag=8594033301 location=SC-101
+2026-08-11 10:24:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:24:23.556 [INFO] Received scan: tag=9605144401 location=SC-102
+2026-08-11 10:24:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:24:31.778 [INFO] Received scan: tag=0716255501 location=SC-103
+2026-08-11 10:24:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:24:42.990 [INFO] Received scan: tag=1827366601 location=SC-101
+2026-08-11 10:24:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:24:51.112 [INFO] Received scan: tag=2938477701 location=SC-102
+2026-08-11 10:24:55.127 [INFO] Flushed 1 bags to database
+
+# Normal traffic continues...
+2026-08-11 10:30:03.112 [INFO] Received scan: tag=3049588801 location=SC-103
+2026-08-11 10:30:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:30:12.334 [INFO] Received scan: tag=4150699901 location=SC-101
+2026-08-11 10:30:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:30:23.556 [INFO] Received scan: tag=5261711001 location=SC-102
+2026-08-11 10:30:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:30:31.778 [INFO] Received scan: tag=6372822101 location=SC-103
+2026-08-11 10:30:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:30:42.990 [INFO] Received scan: tag=7483923201 location=SC-101
+2026-08-11 10:30:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:30:51.112 [INFO] Received scan: tag=8594034301 location=SC-102
+2026-08-11 10:30:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:31:03.334 [INFO] Received scan: tag=9605145401 location=SC-103
+2026-08-11 10:31:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:31:12.556 [INFO] Received scan: tag=0716256501 location=SC-101
+2026-08-11 10:31:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:31:23.778 [INFO] Received scan: tag=1827367601 location=SC-102
+2026-08-11 10:31:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:31:31.990 [INFO] Received scan: tag=2938478701 location=SC-103
+2026-08-11 10:31:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:31:43.112 [INFO] Received scan: tag=3049589801 location=SC-101
+2026-08-11 10:31:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:31:51.334 [INFO] Received scan: tag=4150600901 location=SC-102
+2026-08-11 10:31:55.127 [INFO] Flushed 1 bags to database
+
+# ============ PHANTOM BAG EVENT #2 ============
+# Another burst with colliding prefix "5261"
+2026-08-11 10:45:22.001 [INFO] Received scan: tag=5261712101 location=SC-101
+2026-08-11 10:45:22.004 [INFO] Received scan: tag=5261712102 location=SC-103
+2026-08-11 10:45:22.123 [INFO] Received scan: tag=6372823101 location=SC-102
+2026-08-11 10:45:22.234 [INFO] Received scan: tag=7483924201 location=SC-101
+2026-08-11 10:45:22.345 [INFO] Received scan: tag=8594035301 location=SC-103
+2026-08-11 10:45:22.456 [INFO] Received scan: tag=9605146401 location=SC-102
+2026-08-11 10:45:22.567 [INFO] Received scan: tag=0716257501 location=SC-101
+2026-08-11 10:45:22.678 [INFO] Received scan: tag=1827368601 location=SC-103
+2026-08-11 10:45:22.789 [INFO] Received scan: tag=2938479701 location=SC-102
+2026-08-11 10:45:22.890 [INFO] Received scan: tag=3049590801 location=SC-101
+2026-08-11 10:45:22.912 [INFO] Flushed 10 bags to database
+# ^^^ Only 10 flushed but 11 were received! Bag 5261712101 lost.
+
+2026-08-11 10:45:31.112 [INFO] Received scan: tag=4150601901 location=SC-102
+2026-08-11 10:45:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:45:42.334 [INFO] Received scan: tag=5261713001 location=SC-103
+2026-08-11 10:45:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:45:51.556 [INFO] Received scan: tag=6372824101 location=SC-101
+2026-08-11 10:45:55.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:46:03.778 [INFO] Received scan: tag=7483925201 location=SC-102
+2026-08-11 10:46:05.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:46:12.990 [INFO] Received scan: tag=8594036301 location=SC-103
+2026-08-11 10:46:15.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:46:23.112 [INFO] Received scan: tag=9605147401 location=SC-101
+2026-08-11 10:46:25.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:46:31.334 [INFO] Received scan: tag=0716258501 location=SC-102
+2026-08-11 10:46:35.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:46:42.556 [INFO] Received scan: tag=1827369601 location=SC-103
+2026-08-11 10:46:45.127 [INFO] Flushed 1 bags to database
+2026-08-11 10:46:51.778 [INFO] Received scan: tag=2938480701 location=SC-101
+2026-08-11 10:46:55.127 [INFO] Flushed 1 bags to database
+
+# End of sample log period
+2026-08-11 11:00:00.001 [INFO] === End of sample period ===

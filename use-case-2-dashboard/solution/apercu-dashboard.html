@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aperçu — dashboard Grafana bhs-controlroom</title>
+<link rel="icon" href="data:,">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #0b0c0e; }
+  body {
+    font-family: Inter, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #ccccdc;
+    padding: 18px 12px 28px;
+  }
+  .caption {
+    max-width: 1520px; margin: 0 auto 12px;
+    font-size: 13px; color: #8e8e9a; letter-spacing: .2px;
+  }
+  .caption code { font-family: Consolas, monospace; color: #a8abb3; }
+  .stage { width: 100%; display: flex; justify-content: center; }
+  .screen {
+    width: 1520px; height: 855px; flex: none;
+    background: #111217;
+    border: 1px solid #26282e; border-radius: 4px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    grid-template-rows: 157px 303px 363px;
+    gap: 8px;
+    transform-origin: top left;
+  }
+  .panel {
+    background: #181b1f;
+    border: 1px solid rgba(204, 204, 220, 0.07);
+    border-radius: 2px;
+    display: flex; flex-direction: column;
+    min-width: 0; overflow: hidden;
+  }
+  .panel-title {
+    flex: none;
+    font-size: 13px; font-weight: 500; color: #ccccdc;
+    padding: 7px 12px 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .panel-body { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
+
+  /* Bannière fraîcheur (stat, colorMode background) */
+  .banner {
+    grid-column: 1 / 25;
+    background: linear-gradient(120deg, #3d6f37 0%, #56a64b 100%);
+    border: none;
+    align-items: center; justify-content: center; flex-direction: row;
+  }
+  .banner .value {
+    font-size: 42px; font-weight: 600; color: #ffffff; letter-spacing: 1px;
+  }
+
+  /* KPI */
+  .kpi-value { font-weight: 600; line-height: 1; text-align: center; }
+  .kpi-unit  { font-weight: 500; }
+  .green  { color: #73bf69; }
+  .orange { color: #ff9830; }
+  .neutral{ color: #ccccdc; }
+
+  .p-bags  { grid-column: 1 / 8; }
+  .p-dwell { grid-column: 8 / 15; }
+  .p-health{ grid-column: 15 / 21; }
+  .p-api   { grid-column: 21 / 25; }
+
+  .p-bags  .kpi-value { font-size: 118px; }
+  .p-dwell .kpi-value { font-size: 96px; }
+  .p-dwell .kpi-unit  { font-size: 44px; margin-left: 10px; }
+
+  .health-body { display: flex; width: 100%; height: 100%; }
+  .health-stat {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+  }
+  .health-name  { font-size: 15px; color: #ccccdc; text-align: center; }
+  .health-value { font-size: 46px; font-weight: 600; }
+
+  .p-api .kpi-value { font-size: 27px; font-weight: 500; }
+
+  /* Table */
+  .p-table { grid-column: 1 / 13; }
+  .p-table .panel-body { align-items: stretch; padding: 2px 6px 6px; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th {
+    font-size: 16px; font-weight: 600; color: #ccccdc; text-align: left;
+    padding: 9px 12px; border-bottom: 1px solid rgba(204, 204, 220, 0.15);
+  }
+  td {
+    font-size: 19px; color: #ccccdc;
+    padding: 10px 12px; border-bottom: 1px solid rgba(204, 204, 220, 0.06);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  tr:last-child td { border-bottom: none; }
+  th.c, td.c { text-align: center; }
+  .cell-bg {
+    display: block; text-align: center; font-weight: 600;
+    padding: 8px 0; border-radius: 2px; color: #ffffff;
+  }
+  .bg-green { background: #56a64b; }
+  .bg-red   { background: #e02f44; }
+  .bg-grey  { background: #585858; color: rgba(255, 255, 255, 0.75); }
+
+  /* Bar chart */
+  .p-chart { grid-column: 13 / 25; }
+  .p-chart .panel-body { padding: 4px 8px 2px; }
+  .p-chart svg { width: 100%; height: 100%; }
+  .axis-label { font-size: 12px; fill: rgba(204, 204, 220, 0.62); font-family: inherit; }
+  .gridline { stroke: rgba(204, 204, 220, 0.08); stroke-width: 1; }
+  .bar { fill: #3274d9; fill-opacity: 0.8; }
+  .bar-partial { fill: #3274d9; fill-opacity: 0.35; stroke: rgba(115, 165, 235, 0.8); stroke-width: 1; stroke-dasharray: 4 3; }
+</style>
+</head>
+<body>
+  <div class="caption">
+    Aperçu statique du dashboard Grafana <strong>bhs-controlroom</strong> — rendu kiosk 1920 × 1080, thème sombre,
+    rafraîchissement 30 s. Données fictives reprises de l'énoncé. Fichier importable&nbsp;: <code>dashboard.json</code>.
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="screen" id="screen">
+
+      <!-- Bannière fraîcheur — SQL, requête n°4 de queries.sql -->
+      <div class="panel banner" title="Stat SQL (requête n°4) : OK / IDLE / DATA STALE — calcul côté serveur, indépendant de l'API et de l'horloge du TV">
+        <div class="value">DONNÉES À JOUR</div>
+      </div>
+
+      <!-- KPI : bagages dans le système -->
+      <div class="panel p-bags" title="GET /api/v1/status → bags_in_system — seuils 300 / 450">
+        <div class="panel-title">Bagages dans le système</div>
+        <div class="panel-body"><div class="kpi-value green">142</div></div>
+      </div>
+
+      <!-- KPI : séjour moyen -->
+      <div class="panel p-dwell" title="GET /api/v1/status → avg_dwell_minutes — seuils 8 / 12 min">
+        <div class="panel-title">Séjour moyen</div>
+        <div class="panel-body">
+          <div class="kpi-value green">4.2<span class="kpi-unit">min</span></div>
+        </div>
+      </div>
+
+      <!-- Santé des données -->
+      <div class="panel p-health" title="SQL requête n°5 (fantômes) + écart entre le compteur API et le compteur SQL dédupliqué">
+        <div class="panel-title">Santé des données</div>
+        <div class="panel-body health-body">
+          <div class="health-stat">
+            <div class="health-name">Fantômes probables</div>
+            <div class="health-value orange">7</div>
+          </div>
+          <div class="health-stat">
+            <div class="health-name">Écart API - SQL</div>
+            <div class="health-value orange">7</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dernière donnée API -->
+      <div class="panel p-api" title="GET /api/v1/status → last_update — signal secondaire, la bannière SQL fait foi">
+        <div class="panel-title">Fraîcheur API</div>
+        <div class="panel-body"><div class="kpi-value neutral">il y a quelques secondes</div></div>
+      </div>
+
+      <!-- Top 5 bloqués -->
+      <div class="panel p-table" title="GET /api/v1/bags/stuck?threshold_minutes=15 — tri par entrée, rouge ≥ 30 min, estompé ≥ 120 min (fantôme probable)">
+        <div class="panel-title">Top 5 bagages bloqués (&gt; 15 min)</div>
+        <div class="panel-body">
+          <table>
+            <colgroup>
+              <col style="width: 24%"><col style="width: 17%"><col style="width: 19%">
+              <col style="width: 17%"><col style="width: 23%">
+            </colgroup>
+            <thead>
+              <tr><th>Tag</th><th class="c">Entré à</th><th>Position</th><th>Vol</th><th class="c">Séjour (min)</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0847291063</td><td class="c">08:13</td><td>SC-091</td><td>AF7702</td>
+                <td class="c"><span class="cell-bg bg-grey" title="≥ 120 min : fantôme probable (use case 1)">142</span></td>
+              </tr>
+              <tr>
+                <td>2290184417</td><td class="c">09:57</td><td>ML-004</td><td>EJU4517</td>
+                <td class="c"><span class="cell-bg bg-red">38</span></td>
+              </tr>
+              <tr>
+                <td>1234567890</td><td class="c">10:15</td><td>SC-103</td><td>SN3012</td>
+                <td class="c"><span class="cell-bg bg-green">20</span></td>
+              </tr>
+              <tr>
+                <td>0987654321</td><td class="c">10:18</td><td>SC-101</td><td>LH1234</td>
+                <td class="c"><span class="cell-bg bg-green">17</span></td>
+              </tr>
+              <tr>
+                <td>5561203984</td><td class="c">10:19</td><td>SC-117</td><td>BA341</td>
+                <td class="c"><span class="cell-bg bg-green">16</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Débit 24 h -->
+      <div class="panel p-chart" title="GET /api/v1/throughput?hours=24 — la barre de l'heure en cours (hachurée) est partielle">
+        <div class="panel-title">Débit — 24 dernières heures</div>
+        <div class="panel-body">
+          <svg viewBox="0 0 860 372" preserveAspectRatio="none" role="img"
+               aria-label="Débit horaire des bagages sur 24 heures">
+            <line class="gridline" x1="50" y1="336" x2="850" y2="336"/>
+            <line class="gridline" x1="50" y1="241" x2="850" y2="241"/>
+            <line class="gridline" x1="50" y1="145" x2="850" y2="145"/>
+            <line class="gridline" x1="50" y1="50"  x2="850" y2="50"/>
+            <text class="axis-label" x="42" y="340" text-anchor="end">0</text>
+            <text class="axis-label" x="42" y="245" text-anchor="end">500</text>
+            <text class="axis-label" x="42" y="149" text-anchor="end">1000</text>
+            <text class="axis-label" x="42" y="54"  text-anchor="end">1500</text>
+
+            <rect class="bar" x="56.6"  y="126" width="20" height="210"><title>11:00 — 1102</title></rect>
+            <rect class="bar" x="89.8"  y="78"  width="20" height="258"><title>12:00 — 1356</title></rect>
+            <rect class="bar" x="123.0" y="52"  width="20" height="284"><title>13:00 — 1489</title></rect>
+            <rect class="bar" x="156.1" y="27"  width="20" height="309"><title>14:00 — 1623</title></rect>
+            <rect class="bar" x="189.3" y="44"  width="20" height="292"><title>15:00 — 1534</title></rect>
+            <rect class="bar" x="222.5" y="61"  width="20" height="275"><title>16:00 — 1445</title></rect>
+            <rect class="bar" x="255.6" y="94"  width="20" height="242"><title>17:00 — 1267</title></rect>
+            <rect class="bar" x="288.8" y="122" width="20" height="214"><title>18:00 — 1123</title></rect>
+            <rect class="bar" x="322.0" y="148" width="20" height="188"><title>19:00 — 987</title></rect>
+            <rect class="bar" x="355.1" y="192" width="20" height="144"><title>20:00 — 756</title></rect>
+            <rect class="bar" x="388.3" y="232" width="20" height="104"><title>21:00 — 543</title></rect>
+            <rect class="bar" x="421.5" y="275" width="20" height="61"><title>22:00 — 321</title></rect>
+            <rect class="bar" x="454.6" y="298" width="20" height="38"><title>23:00 — 198</title></rect>
+            <rect class="bar" x="487.8" y="319" width="20" height="17"><title>00:00 — 87</title></rect>
+            <rect class="bar" x="521.0" y="327" width="20" height="9"><title>01:00 — 45</title></rect>
+            <rect class="bar" x="554.1" y="332" width="20" height="4"><title>02:00 — 23</title></rect>
+            <rect class="bar" x="587.3" y="334" width="20" height="2"><title>03:00 — 12</title></rect>
+            <rect class="bar" x="620.5" y="330" width="20" height="6"><title>04:00 — 34</title></rect>
+            <rect class="bar" x="653.6" y="306" width="20" height="30"><title>05:00 — 156</title></rect>
+            <rect class="bar" x="686.8" y="243" width="20" height="93"><title>06:00 — 489</title></rect>
+            <rect class="bar" x="720.0" y="169" width="20" height="167"><title>07:00 — 876</title></rect>
+            <rect class="bar" x="753.1" y="101" width="20" height="235"><title>08:00 — 1234</title></rect>
+            <rect class="bar" x="786.3" y="58"  width="20" height="278"><title>09:00 — 1456</title></rect>
+            <rect class="bar-partial" x="819.5" y="44" width="20" height="292"><title>10:00 — 1532 (heure en cours, partielle)</title></rect>
+
+            <text class="axis-label" x="99.8"  y="358" text-anchor="middle">12:00</text>
+            <text class="axis-label" x="199.3" y="358" text-anchor="middle">15:00</text>
+            <text class="axis-label" x="298.8" y="358" text-anchor="middle">18:00</text>
+            <text class="axis-label" x="398.3" y="358" text-anchor="middle">21:00</text>
+            <text class="axis-label" x="497.8" y="358" text-anchor="middle">00:00</text>
+            <text class="axis-label" x="597.3" y="358" text-anchor="middle">03:00</text>
+            <text class="axis-label" x="696.8" y="358" text-anchor="middle">06:00</text>
+            <text class="axis-label" x="796.3" y="358" text-anchor="middle">09:00</text>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var stage = document.getElementById("stage");
+      var screen = document.getElementById("screen");
+      function fit() {
+        var scale = Math.min(1, stage.clientWidth / 1520);
+        screen.style.transform = "scale(" + scale + ")";
+        stage.style.height = (855 * scale) + "px";
+      }
+      window.addEventListener("resize", fit);
+      fit();
+    })();
+  </script>
+</body>
+</html>

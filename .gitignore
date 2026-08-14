@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated at runtime by bag_tracker.py
+*.db
+
+# OS
+Thumbs.db
+.DS_Store

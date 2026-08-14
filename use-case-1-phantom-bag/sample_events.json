@@ -1,0 +1,22 @@
+[
+  {"tag_id": "8594031301", "location": "SC-101", "timestamp": "2026-08-11T10:22:14.112", "flight_id": "SN3012", "destination": "PIER-A-03"},
+  {"tag_id": "8594031302", "location": "SC-102", "timestamp": "2026-08-11T10:22:14.117", "flight_id": "SN3012", "destination": "PIER-A-03"},
+  {"tag_id": "9605142401", "location": "SC-103", "timestamp": "2026-08-11T10:22:14.234", "flight_id": "LH1234", "destination": "PIER-B-07"},
+  {"tag_id": "0716253501", "location": "SC-101", "timestamp": "2026-08-11T10:22:14.456", "flight_id": "AF8822", "destination": "PIER-C-12"},
+  {"tag_id": "1827364601", "location": "SC-102", "timestamp": "2026-08-11T10:22:14.678", "flight_id": "BA234", "destination": "PIER-A-01"},
+  {"tag_id": "2938475701", "location": "SC-103", "timestamp": "2026-08-11T10:22:14.890", "flight_id": "SN3012", "destination": "PIER-A-03"},
+  {"tag_id": "3049586801", "location": "SC-101", "timestamp": "2026-08-11T10:22:15.112", "flight_id": "TK1234", "destination": "PIER-B-09"},
+  {"tag_id": "4150697901", "location": "SC-102", "timestamp": "2026-08-11T10:22:15.334", "flight_id": "LH1234", "destination": "PIER-B-07"},
+  {"tag_id": "5261709001", "location": "SC-103", "timestamp": "2026-08-11T10:22:15.556", "flight_id": "AF8822", "destination": "PIER-C-12"},
+  {"tag_id": "6372820101", "location": "SC-101", "timestamp": "2026-08-11T10:22:15.778", "flight_id": "SN3015", "destination": "PIER-A-05"},
+  {"tag_id": "5261712101", "location": "SC-101", "timestamp": "2026-08-11T10:45:22.001", "flight_id": "BA567", "destination": "PIER-A-02"},
+  {"tag_id": "5261712102", "location": "SC-103", "timestamp": "2026-08-11T10:45:22.004", "flight_id": "BA567", "destination": "PIER-A-02"},
+  {"tag_id": "6372823101", "location": "SC-102", "timestamp": "2026-08-11T10:45:22.123", "flight_id": "LH5678", "destination": "PIER-B-08"},
+  {"tag_id": "7483924201", "location": "SC-101", "timestamp": "2026-08-11T10:45:22.234", "flight_id": "AF1234", "destination": "PIER-C-11"},
+  {"tag_id": "8594035301", "location": "SC-103", "timestamp": "2026-08-11T10:45:22.345", "flight_id": "TK5678", "destination": "PIER-B-10"},
+  {"tag_id": "9605146401", "location": "SC-102", "timestamp": "2026-08-11T10:45:22.456", "flight_id": "SN3020", "destination": "PIER-A-06"},
+  {"tag_id": "0716257501", "location": "SC-101", "timestamp": "2026-08-11T10:45:22.567", "flight_id": "BA890", "destination": "PIER-A-04"},
+  {"tag_id": "1827368601", "location": "SC-103", "timestamp": "2026-08-11T10:45:22.678", "flight_id": "LH9012", "destination": "PIER-B-06"},
+  {"tag_id": "2938479701", "location": "SC-102", "timestamp": "2026-08-11T10:45:22.789", "flight_id": "AF3456", "destination": "PIER-C-10"},
+  {"tag_id": "3049590801", "location": "SC-101", "timestamp": "2026-08-11T10:45:22.890", "flight_id": "TK7890", "destination": "PIER-B-11"}
+]
