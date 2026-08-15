@@ -9,3 +9,9 @@ __pycache__/
 # OS
 Thumbs.db
 .DS_Store
+
+# Réglages locaux de l'outillage
+.claude/
+
+# Banc de test local du dashboard : outil de travail, hors livrables
+use-case-2-dashboard/solution/banc-de-test/

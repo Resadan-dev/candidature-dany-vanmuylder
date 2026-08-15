@@ -396,7 +396,7 @@
       "type": "table",
       "title": "Top 5 bagages bloqués (> 15 min)",
       "description": "Au-delà de 120 min de séjour : probablement un fantôme (bug tracker, use case 1) ; estompé, jamais masqué.",
-      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 9 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 9 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "${DS_BHS_API}" },
       "pluginVersion": "9.5.15",
       "targets": [
@@ -532,7 +532,7 @@
       "type": "barchart",
       "title": "Débit des 24 dernières heures",
       "description": "La barre de l'heure en cours est partielle : une « chute » sur la dernière barre est normale.",
-      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 9 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 9 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "${DS_BHS_API}" },
       "pluginVersion": "9.5.15",
       "targets": [

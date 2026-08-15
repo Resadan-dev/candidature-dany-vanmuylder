@@ -77,7 +77,7 @@ dans un outil déjà exploité.
 ![Dashboard en conditions nominales](images/dashboard-nominal.png)
 *Le [dashboard.json](dashboard.json) livré, importé tel quel dans un Grafana
 9.5.15 de test (Docker) : plugin Infinity 2.11.4, API mockée, SQL Server 2019
-peuplé de données fictives. Viewport 1100 × 617, celui du kiosk (§7).*
+peuplé de données fictives. Viewport 1100 × 655, celui du kiosk (§7).*
 
 ## 4. Sources de données
 

@@ -20,13 +20,13 @@
   .caption code { font-family: Consolas, monospace; color: #a8abb3; }
   .stage { width: 100%; display: flex; justify-content: center; }
   .screen {
-    width: 1520px; height: 855px; flex: none;
+    width: 1520px; height: 882px; flex: none;
     background: #111217;
     border: 1px solid #26282e; border-radius: 4px;
     padding: 8px;
     display: grid;
     grid-template-columns: repeat(24, 1fr);
-    grid-template-rows: 157px 303px 363px;
+    grid-template-rows: 157px 303px 390px;
     gap: 8px;
     transform-origin: top left;
   }
@@ -153,7 +153,7 @@
           </div>
           <div class="health-stat">
             <div class="health-name">Écart API - SQL</div>
-            <div class="health-value orange">7</div>
+            <div class="health-value orange">4</div>
           </div>
         </div>
       </div>
@@ -264,7 +264,7 @@
       function fit() {
         var scale = Math.min(1, stage.clientWidth / 1520);
         screen.style.transform = "scale(" + scale + ")";
-        stage.style.height = (855 * scale) + "px";
+        stage.style.height = (882 * scale) + "px";
       }
       window.addEventListener("resize", fit);
       fit();
