@@ -1,0 +1,467 @@
+/* BHS simulation console.
+   Control-room styling: dark, dense, monospace readouts, amber for actions
+   and the Grafana semantic colours for anything the dashboard also shows.
+
+   Layout constraint: the whole console must fit one screen without scrolling,
+   so the page is three columns of stacked panels rather than a flowing grid. */
+
+:root {
+  --bg: #0a0c10;
+  --surface: #12161d;
+  --surface-2: #171c25;
+  --surface-3: #1d2430;
+  --line: #232a35;
+  --line-bright: #333e4d;
+
+  --text: #d9dee8;
+  --text-dim: #98a2b3;
+  --muted: #6d7787;
+
+  --amber: #ffb02e;
+  --cyan: #4fc3e8;
+
+  /* Same values as dashboard.json, so a colour here means the same there. */
+  --green: #73bf69;
+  --orange: #ff9830;
+  --red: #e02f44;
+  --blue: #3274d9;
+
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
+  --sans: system-ui, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+
+  --radius: 3px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --gap: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.45;
+  overflow: hidden;              /* one screen, no scrolling */
+  background-image:
+    linear-gradient(rgba(79, 195, 232, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 195, 232, 0.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+h1, h2 { margin: 0; font-weight: 600; }
+
+/* ---------------------------------------------------------------- header */
+
+.masthead {
+  flex: none;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #10141b 0%, rgba(16, 20, 27, 0.6) 100%);
+}
+
+.masthead-id { display: flex; align-items: center; gap: 12px; }
+
+/* Three bars: a belt seen end-on. Cheap identity, no image to ship. */
+.mark {
+  width: 24px; height: 24px; flex: none;
+  background:
+    linear-gradient(var(--amber), var(--amber)) 0 2px / 100% 4px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 0 10px / 70% 4px no-repeat,
+    linear-gradient(var(--muted), var(--muted)) 0 18px / 40% 4px no-repeat;
+}
+
+.masthead h1 { font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; }
+.masthead p { margin: 1px 0 0; font-size: 11.5px; color: var(--muted); }
+
+.masthead-live { display: flex; align-items: center; gap: 18px; }
+
+/* One line, always: a wrapping status message pushes the header onto two
+   rows and shifts the whole layout down. */
+.status {
+  margin: 0; font-family: var(--mono); font-size: 11px; color: var(--muted);
+  max-width: 34ch; text-align: right;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.clock { text-align: right; }
+.clock-label {
+  display: block; font-size: 9.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.clock-value { font-family: var(--mono); font-size: 20px; color: var(--cyan); }
+
+.dashboard-link {
+  flex: none;
+  font-size: 12.5px; font-weight: 500; color: var(--bg);
+  background: var(--amber);
+  padding: 8px 14px; border-radius: var(--radius);
+  text-decoration: none; white-space: nowrap;
+  transition: transform 140ms var(--ease), filter 140ms var(--ease);
+}
+.dashboard-link:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.dashboard-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+/* ---------------------------------------------------------------- layout */
+
+.layout {
+  flex: 1;
+  min-height: 0;                 /* let the columns shrink instead of overflow */
+  display: grid;
+  grid-template-columns: 3.1fr 4.4fr 4.5fr;
+  gap: var(--gap);
+  padding: var(--gap) 20px;
+  max-width: 1900px; width: 100%; margin: 0 auto;
+}
+
+/* A column stacks its panels and shares the height between them. The weights
+   below are what keeps the page free of holes: every panel grows to fill its
+   column, and the extra room goes to the things worth enlarging — the
+   readouts, the traffic curve — rather than pooling at the bottom. */
+.column { display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
+
+/* Basis close to the natural height of each panel, so growth is shared
+   proportionally rather than handed to whichever panel happens to be first. */
+.panel-scenarios { flex: 1 1 560px; }
+.panel-failures  { flex: 0 1 190px; }
+.panel-readout   { flex: 1 1 480px; }
+.panel-traffic   { flex: 1 1 220px; }
+.panel-uc1       { flex: 0 1 310px; }
+.panel-day       { flex: 1 1 420px; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px 14px;
+  position: relative;
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+
+/* Accent rule at the top of each panel, tinted per family. */
+.panel::before {
+  content: ""; position: absolute; inset: 0 auto auto 0;
+  height: 2px; width: 42px; background: var(--line-bright);
+}
+.panel-readout::before  { background: var(--cyan); }
+.panel-uc1::before      { background: var(--red); }
+.panel-failures::before { background: var(--orange); }
+.panel-day::before      { background: var(--amber); }
+
+.panel-head { flex: none; margin-bottom: 10px; }
+.panel-head h2 {
+  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.panel-head p { margin: 3px 0 0; font-size: 11.5px; color: var(--muted); }
+
+/* ------------------------------------------------------------- scenarios */
+
+/* A vertical list rather than a card grid: seven items never divide evenly
+   into columns, and the leftover cells read as holes. */
+.scenario-list {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.scenario {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 3px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left; cursor: pointer;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 7px 10px 7px 0;
+  color: inherit; font: inherit;
+  overflow: hidden;
+  transition: border-color 160ms var(--ease), background 160ms var(--ease);
+}
+.scenario:hover { background: var(--surface-3); border-color: var(--line-bright); }
+.scenario:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.scenario[aria-pressed="true"] {
+  background: var(--surface-3);
+  box-shadow: inset 0 0 0 1px rgba(255, 176, 46, 0.3);
+}
+
+/* Left edge as severity marker: the eye finds the red scenarios instantly. */
+.scenario-flag { height: 100%; background: var(--line-bright); border-radius: 2px 0 0 2px; }
+.scenario[aria-pressed="true"] .scenario-flag { background: var(--amber); }
+.scenario-flag[data-tone="green"]  { background: rgba(115, 191, 105, 0.55); }
+.scenario-flag[data-tone="orange"] { background: rgba(255, 152, 48, 0.6); }
+.scenario-flag[data-tone="red"]    { background: rgba(224, 47, 68, 0.65); }
+.scenario-flag[data-tone="blue"]   { background: rgba(50, 116, 217, 0.65); }
+
+.scenario-body { min-width: 0; }
+.scenario-title {
+  display: block; font-weight: 600; font-size: 12.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.scenario-note {
+  display: block; font-size: 11px; color: var(--muted); line-height: 1.35;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.scenario-chips { display: flex; gap: 4px; flex: none; }
+
+.chip {
+  font-family: var(--mono); font-size: 10px;
+  padding: 1px 5px; border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05); color: var(--text-dim);
+  border: 1px solid transparent; white-space: nowrap;
+}
+.chip[data-tone="green"]  { color: var(--green);  border-color: rgba(115, 191, 105, 0.32); }
+.chip[data-tone="orange"] { color: var(--orange); border-color: rgba(255, 152, 48, 0.34); }
+.chip[data-tone="red"]    { color: var(--red);    border-color: rgba(224, 47, 68, 0.38); }
+.chip[data-tone="blue"]   { color: var(--blue);   border-color: rgba(50, 116, 217, 0.4); }
+
+/* --------------------------------------------------------------- readout */
+
+.banner-preview {
+  flex: none;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 46px; margin-bottom: 10px; padding: 6px 12px;
+  border-radius: var(--radius);
+  font-weight: 600; font-size: 14px; letter-spacing: 0.05em;
+  color: #fff; text-align: center;
+  background: linear-gradient(120deg, #3d6f37, #56a64b);
+  transition: background 260ms var(--ease);
+}
+.banner-preview[data-state="STALE"] { background: linear-gradient(120deg, #8f1d2b, #e02f44); }
+.banner-preview[data-state="IDLE"]  { background: linear-gradient(120deg, #1f4585, #3274d9); }
+
+.readout-grid {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 8px;
+}
+
+.readout {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 9px 11px;
+  /* space-between rather than center: when the tile is taller than its
+     content, the label anchors to the top and the scale to the bottom, so
+     the tile reads as filled instead of hollow. */
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.readout-label {
+  font-size: 10px; letter-spacing: 0.11em;
+  text-transform: uppercase; color: var(--muted);
+}
+/* The number takes the space between label and scale and centres itself in
+   it, so a tall tile stays balanced instead of leaving a gap under the digits. */
+.readout-value {
+  flex: 1;
+  display: flex; align-items: center;
+  font-family: var(--mono); font-size: clamp(24px, 2.6vw, 40px); line-height: 1.1;
+  margin: 2px 0 1px; color: var(--text);
+  transition: color 200ms var(--ease);
+}
+.readout-value small { font-size: 14px; margin-left: 4px; color: var(--muted); }
+.readout-scale { font-size: 10px; color: var(--muted); }
+
+.readout[data-tone="green"]  .readout-value { color: var(--green); }
+.readout[data-tone="orange"] .readout-value { color: var(--orange); }
+.readout[data-tone="red"]    .readout-value { color: var(--red); }
+
+/* Mirror of the dashboard's stuck-bag column: same thresholds, same colours,
+   including the grey cell that flags a bag nobody will find on a belt. */
+.stuck { flex: none; margin-top: 10px; }
+.stuck-label {
+  display: block; font-size: 10px; letter-spacing: 0.11em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+}
+.stuck-hint { letter-spacing: 0; text-transform: none; opacity: 0.75; }
+.stuck-cells { display: flex; gap: 4px; flex-wrap: wrap; }
+.stuck-cells span {
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  min-width: 42px; padding: 4px 0; text-align: center;
+  border-radius: 2px; color: #fff;
+}
+.stuck-cells .empty {
+  color: var(--muted); font-weight: 400; background: var(--surface-2);
+  min-width: auto; padding: 4px 8px;
+}
+.stuck-cells [data-tone="green"] { background: #56a64b; }
+.stuck-cells [data-tone="red"]   { background: var(--red); }
+.stuck-cells [data-tone="grey"]  { background: #585858; color: rgba(255, 255, 255, 0.75); }
+
+/* -------------------------------------------------------------- sliders */
+
+.control { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.control-line { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.control-line label { font-size: 12px; color: var(--text-dim); }
+.control .hint { color: var(--muted); }
+.control output { font-family: var(--mono); font-size: 12.5px; color: var(--cyan); }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; margin: 7px 0 0; background: transparent; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--line-bright), var(--surface-3));
+}
+input[type="range"]::-moz-range-track {
+  height: 4px; border-radius: 2px; background: var(--line-bright);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; margin-top: -5px;
+  border-radius: 50%; background: var(--amber);
+  border: 2px solid var(--bg);
+  transition: transform 140ms var(--ease), box-shadow 140ms var(--ease);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--amber); border: 2px solid var(--bg);
+}
+input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.18); }
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(79, 195, 232, 0.45);
+}
+
+/* ----------------------------------------------------- segmented controls */
+
+/* Both states stay visible and named. A lone toggle forces the reader to
+   work out what "off" would mean, which is exactly the wrong question when
+   the two states are "running" and "stopped". */
+.control-row {
+  /* Grows to share the panel, but capped: two switches spread over 300 px
+     read as a layout accident, not as breathing room. */
+  flex: 1 1 auto; max-height: 84px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+.control-row:last-of-type { border-bottom: none; }
+
+.control-text { min-width: 0; }
+.control-title { display: block; font-size: 12.5px; font-weight: 500; }
+.control-note {
+  display: block; margin-top: 2px;
+  font-size: 11px; color: var(--muted); line-height: 1.35;
+}
+.control-note em { color: var(--text-dim); font-style: normal; font-weight: 600; }
+
+.segmented {
+  flex: none;
+  display: flex; gap: 2px; padding: 2px;
+  background: var(--bg);
+  border: 1px solid var(--line-bright);
+  border-radius: var(--radius);
+}
+.segmented button {
+  font: inherit; font-size: 11.5px; font-weight: 500;
+  padding: 5px 11px; cursor: pointer;
+  background: transparent; color: var(--muted);
+  border: 0; border-radius: 2px;
+  transition: background 160ms var(--ease), color 160ms var(--ease);
+  white-space: nowrap;
+}
+.segmented button:hover { color: var(--text); background: var(--surface-2); }
+.segmented button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+
+.segmented button[aria-pressed="true"] { color: var(--bg); font-weight: 600; }
+.segmented button[aria-pressed="true"][data-tone="green"]   { background: var(--green); }
+.segmented button[aria-pressed="true"][data-tone="red"]     { background: var(--red); color: #fff; }
+.segmented button[aria-pressed="true"][data-tone="amber"]   { background: var(--amber); }
+.segmented button[aria-pressed="true"][data-tone="cyan"]    { background: var(--cyan); }
+.segmented button[aria-pressed="true"][data-tone="neutral"] { background: var(--line-bright); color: var(--text); }
+
+/* --------------------------------------------------------------- formula */
+
+.formula {
+  flex: none;
+  margin: 10px 0; padding: 9px 11px;
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.formula figcaption {
+  font-size: 10px; letter-spacing: 0.11em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 5px;
+}
+.formula code {
+  display: block; font-family: var(--mono); font-size: 11.5px;
+  color: var(--cyan); line-height: 1.5; word-break: break-word;
+}
+.formula p { margin: 6px 0 0; font-size: 11px; color: var(--muted); line-height: 1.4; }
+.formula em { color: var(--text-dim); font-style: normal; font-weight: 600; }
+
+/* --------------------------------------------------------------- actions */
+
+.action {
+  flex: none; align-self: flex-start;
+  display: inline-flex; align-items: baseline; gap: 8px;
+  background: var(--surface-3); color: var(--text);
+  border: 1px solid var(--line-bright); border-radius: var(--radius);
+  padding: 8px 13px; font: inherit; font-size: 12.5px; cursor: pointer;
+  transition: border-color 150ms var(--ease), background 150ms var(--ease);
+}
+.action:hover { background: #232b38; border-color: var(--amber); }
+.action:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.action-note { font-size: 10.5px; color: var(--muted); }
+
+/* ------------------------------------------------------------- day cycle */
+
+/* 24 bars, one per hour: the traffic curve being replayed. */
+.daychart {
+  flex: 1; min-height: 54px;
+  display: grid; grid-template-columns: repeat(24, 1fr);
+  align-items: end; gap: 3px; margin-top: 10px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.daychart span {
+  display: block; border-radius: 1px 1px 0 0;
+  background: linear-gradient(180deg, var(--cyan), rgba(79, 195, 232, 0.25));
+  opacity: 0.5;
+  transition: opacity 200ms var(--ease), background 200ms var(--ease);
+}
+.daychart span[data-now="true"] {
+  background: linear-gradient(180deg, var(--amber), rgba(255, 176, 46, 0.3));
+  opacity: 1;
+}
+.daychart span[data-tick]::after {
+  content: attr(data-tick);
+  position: absolute; bottom: 0;
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  transform: translateX(-50%);
+}
+
+.scale-note { flex: none; margin: 8px 0 0; font-size: 10.5px; color: var(--muted); }
+.scale-note strong { color: var(--cyan); font-family: var(--mono); font-weight: 400; }
+
+/* ------------------------------------------------------------ narrow view */
+
+/* Below three comfortable columns, fall back to scrolling rather than
+   crushing the panels. */
+@media (max-width: 1280px), (max-height: 620px) {
+  body { overflow: auto; }
+  .layout { grid-template-columns: 1fr 1fr; }
+  .panel-scenarios { grid-column: span 2; }
+  .scenario { min-height: 46px; }
+}
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .panel-scenarios { grid-column: span 1; }
+  .masthead { flex-wrap: wrap; }
+  .status { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 1ms !important; }
+  .dashboard-link:hover { transform: none; }
+}

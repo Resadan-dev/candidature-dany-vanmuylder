@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BHS Simulation Console</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/console.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-id">
+    <span class="mark" aria-hidden="true"></span>
+    <div>
+      <h1>Simulation console</h1>
+      <p>Baggage handling control room &mdash; test bench</p>
+    </div>
+  </div>
+
+  <div class="masthead-live">
+    <p class="status" id="status-line">Ready.</p>
+    <div class="clock" id="clock" hidden>
+      <span class="clock-label">Simulated</span>
+      <span class="clock-value" id="clock-value">--:--</span>
+    </div>
+    <a class="dashboard-link" id="dashboard-link" href="#" target="_blank" rel="noopener">
+      Open dashboard <span aria-hidden="true">&rarr;</span>
+    </a>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ---------------------------------------- column 1: pick and dial in -->
+  <div class="column">
+
+    <section class="panel panel-scenarios" aria-labelledby="h-scenarios">
+      <div class="panel-head">
+        <h2 id="h-scenarios">Scenarios</h2>
+        <p>Each one drives the dashboard into a state worth looking at.</p>
+      </div>
+      <div class="scenario-list" id="scenarios"></div>
+    </section>
+
+    <section class="panel panel-failures" aria-labelledby="h-failures">
+      <div class="panel-head">
+        <h2 id="h-failures">Failure injection</h2>
+        <p>The banner is computed in SQL, so it survives an API outage.</p>
+      </div>
+
+      <div class="control-row">
+        <div class="control-text">
+          <span class="control-title">Tracker feed</span>
+          <span class="control-note">Stopped &rarr; inserts freeze, banner turns <em>DATA STALE</em>.</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Tracker feed" data-control="tracker_feed">
+          <button type="button" data-value="on" data-tone="green">Running</button>
+          <button type="button" data-value="off" data-tone="red">Stopped</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control-text">
+          <span class="control-title">BHS API</span>
+          <span class="control-note">Down &rarr; API panels error, the SQL banner holds.</span>
+        </div>
+        <div class="segmented" role="group" aria-label="BHS API" data-control="api_status">
+          <button type="button" data-value="up" data-tone="green">Up</button>
+          <button type="button" data-value="down" data-tone="red">Down</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ------------------------------------ column 2: what it should do -->
+  <div class="column">
+
+    <section class="panel panel-readout" aria-labelledby="h-readout">
+      <div class="panel-head">
+        <h2 id="h-readout">Expected on the dashboard</h2>
+        <p>Computed from the settings, before the panels refresh.</p>
+      </div>
+
+      <div class="banner-preview" id="banner-preview" data-state="OK">
+        <span id="banner-text">DONN&Eacute;ES &Agrave; JOUR</span>
+      </div>
+
+      <div class="readout-grid">
+        <div class="readout" id="ro-bags">
+          <span class="readout-label">Bags in system</span>
+          <span class="readout-value" id="v-bags">142</span>
+          <span class="readout-scale">green &lt; 300 &lt; amber &lt; 450 &lt; red</span>
+        </div>
+        <div class="readout" id="ro-dwell">
+          <span class="readout-label">Average dwell</span>
+          <span class="readout-value" id="v-dwell">4.2<small>min</small></span>
+          <span class="readout-scale">green &lt; 8 &lt; amber &lt; 12 &lt; red</span>
+        </div>
+        <div class="readout" id="ro-phantoms">
+          <span class="readout-label">Phantom rate</span>
+          <span class="readout-value" id="v-phantoms">0<small>/h</small></span>
+          <span class="readout-scale">bags stranded IN_SYSTEM</span>
+        </div>
+        <div class="readout" id="ro-gap">
+          <span class="readout-label">API &minus; SQL gap</span>
+          <span class="readout-value" id="v-gap">4</span>
+          <span class="readout-scale">de-duplication difference</span>
+        </div>
+      </div>
+
+      <div class="stuck">
+        <span class="stuck-label">Stuck bags table <span class="stuck-hint">dwell in minutes, cell colours as on the dashboard</span></span>
+        <div class="stuck-cells" id="stuck-cells"></div>
+      </div>
+    </section>
+
+    <section class="panel panel-traffic" aria-labelledby="h-traffic">
+      <div class="panel-head">
+        <h2 id="h-traffic">Traffic</h2>
+        <p>Bags in system follows Little's law: arrival rate &times; dwell.</p>
+      </div>
+
+      <div class="control">
+        <div class="control-line">
+          <label for="arrival_rate">Arrival rate</label>
+          <output id="out-arrival_rate">1960 bags/h</output>
+        </div>
+        <input type="range" id="arrival_rate" name="arrival_rate"
+               min="0" max="4000" step="20" value="1960">
+      </div>
+
+      <div class="control">
+        <div class="control-line">
+          <label for="dwell_minutes">Average dwell</label>
+          <output id="out-dwell_minutes">4.2 min</output>
+        </div>
+        <input type="range" id="dwell_minutes" name="dwell_minutes"
+               min="1" max="25" step="0.1" value="4.2">
+      </div>
+
+      <div class="control">
+        <div class="control-line">
+          <label for="stuck_bags">Stuck bags <span class="hint">(over 15 min)</span></label>
+          <output id="out-stuck_bags">5</output>
+        </div>
+        <input type="range" id="stuck_bags" name="stuck_bags"
+               min="0" max="20" step="1" value="5">
+      </div>
+    </section>
+
+  </div>
+
+  <!-- --------------------------------- column 3: the two use cases live -->
+  <div class="column">
+
+    <section class="panel panel-uc1" aria-labelledby="h-uc1">
+      <div class="panel-head">
+        <h2 id="h-uc1">Use case 1 &mdash; phantom bags</h2>
+        <p>The real defect, replayed: a buffer keyed on the first four digits.</p>
+      </div>
+
+      <div class="control-row">
+        <div class="control-text">
+          <span class="control-title">Prefix-collision bug</span>
+          <span class="control-note">Two tags sharing four digits in one flush: the second overwrites the first.</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Prefix-collision bug" data-control="phantom_bug">
+          <button type="button" data-value="fixed" data-tone="green">Fixed</button>
+          <button type="button" data-value="active" data-tone="red">Active</button>
+        </div>
+      </div>
+
+      <figure class="formula">
+        <figcaption>Birthday problem over 10&nbsp;000 prefixes</figcaption>
+        <code id="formula-line">buffer 0.0 events &rarr; 0 scans lost/h &rarr; 0 phantoms/h</code>
+        <p>Loss grows with the <em>square</em> of throughput: invisible at night,
+           costly during the morning bank.</p>
+      </figure>
+
+      <button class="action" id="purge">
+        Purge phantoms <span class="action-note">what the fix does</span>
+      </button>
+    </section>
+
+    <section class="panel panel-day" aria-labelledby="h-day">
+      <div class="panel-head">
+        <h2 id="h-day">Day cycle</h2>
+        <p>Replays 24 h of real traffic shape. Keeps running with this tab closed.</p>
+      </div>
+
+      <div class="control-row">
+        <div class="control-text">
+          <span class="control-title">Auto-play</span>
+          <span class="control-note">Night, morning bank, evening bank &mdash; hands off.</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Day cycle" data-control="day_cycle">
+          <button type="button" data-value="off" data-tone="neutral">Paused</button>
+          <button type="button" data-value="on" data-tone="amber">Playing</button>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control-text">
+          <span class="control-title">Compress 24 h into</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Cycle speed" data-control="day_speed_min">
+          <button type="button" data-value="2" data-tone="cyan">2 min</button>
+          <button type="button" data-value="5" data-tone="cyan">5 min</button>
+          <button type="button" data-value="10" data-tone="cyan">10 min</button>
+        </div>
+      </div>
+
+      <div class="daychart" id="daychart" aria-hidden="true"></div>
+      <p class="scale-note">
+        Wall clock compressed <strong id="time-scale">&times;720</strong> &mdash;
+        one tick advances the system by one simulated hour.
+      </p>
+    </section>
+
+  </div>
+
+</main>
+
+<script src="/console.js"></script>
+</body>
+</html>

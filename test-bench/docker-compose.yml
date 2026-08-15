@@ -1,0 +1,207 @@
+# Test bench for the bhs-controlroom dashboard.
+#
+# Reproduces both sources of the assessment locally, with a console to drive
+# the simulation:
+#
+#   sqlserver  SQL Server 2019, bag_tracking table filled with fake data
+#   mock-api   the three REST endpoints of data_sources.md
+#   console    simulation UI and model, owns state/sim.env
+#   simulator  applies the targets computed by the console, every 5 s
+#   grafana    Grafana 9.5.15 + Infinity plugin 2.11.4, dashboard provisioned
+#
+# state/sim.env carries the current state: the console writes it, the mocked
+# API and the simulator read it. See bench.sh / bench.ps1 and README.md.
+
+name: bhs-bench
+
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: bhs-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in .env}
+      MSSQL_PID: Developer
+      TZ: UTC
+    ports:
+      # Loopback: the database has no reason to be reachable from outside.
+      - "${SQL_BIND:-127.0.0.1}:${SQL_PORT:-1433}:1433"
+    volumes:
+      # Mounted here as well, so the driver scripts can replay the SQL files
+      # through `docker exec`, without an extra container.
+      - ./sql:/sql:ro
+    healthcheck:
+      # The server image ships sqlcmd 18 (/opt/mssql-tools18), which encrypts
+      # by default: -C accepts the container's self-signed certificate.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  # Creates the database, the table and the fake data, then exits. That is
+  # intended: `docker compose ps` will show it as "exited (0)".
+  init:
+    image: mcr.microsoft.com/mssql-tools:latest
+    container_name: bhs-init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      # sqlcmd resolves $(readonly_password) from the environment. Passing it
+      # this way rather than with -v avoids sqlcmd choking on the special
+      # characters of the password.
+      readonly_password: ${SQL_READONLY_PASSWORD:?set SQL_READONLY_PASSWORD in .env}
+    volumes:
+      - ./sql:/sql:ro
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        echo "[init] creating schema and fake data..."
+        /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" \
+          -b -i /sql/01-init.sql
+        echo "[init] done."
+    restart: "no"
+
+  mock-api:
+    image: python:3.12-alpine
+    container_name: bhs-mock-api
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      TZ: UTC
+    volumes:
+      - ./mock-api:/app:ro
+      - ./state:/state
+    command: ["python", "-u", "/app/app.py"]
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${API_PORT:-8080}:8080"
+    networks:
+      default:
+        # The delivered dashboard calls http://api.nce-bhs.local:8080; this
+        # network alias lets dashboard.json be imported without touching a
+        # single URL in it.
+        aliases:
+          - api.nce-bhs.local
+
+  # Simulation console: serves the UI and owns state/sim.env, the only file
+  # the rest of the bench reads. It also advances the clock of the compressed
+  # day cycle, server-side, so the demo keeps running with the tab closed.
+  console:
+    image: python:3.12-alpine
+    container_name: bhs-console
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      TZ: UTC
+      PORT: "8090"
+      STATE_FILE: /state/sim.env
+      STATIC_DIR: /app/static
+      # Used to build the "Open dashboard" link shown in the console.
+      GRAFANA_PORT: ${GRAFANA_PORT:-3000}
+      GRAFANA_PUBLIC_URL: ${GRAFANA_PUBLIC_URL:-}
+      # Empty locally: the console is only reachable from 127.0.0.1.
+      CONSOLE_TOKEN: ${CONSOLE_TOKEN:-}
+    volumes:
+      - ./console:/app:ro
+      - ./state:/state
+    working_dir: /app
+    command: ["python", "-u", "/app/app.py"]
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${CONSOLE_PORT:-8090}:8090"
+
+  # Simulation engine: every 5 s it reads the targets computed by the console
+  # and steers the bag_tracking table towards them. No business logic here --
+  # it only applies numbers that have already been computed and validated.
+  simulator:
+    image: mcr.microsoft.com/mssql-tools:latest
+    container_name: bhs-simulator
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+    volumes:
+      - ./sql:/sql:ro
+      - ./state:/state
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        echo "[simulator] starting, 5 s tick"
+        # Read with grep and never with `source`: the file comes from a web UI.
+        # tr -d '\r': it may have been written from Windows, and one invisible
+        # carriage return would be enough to corrupt an sqlcmd parameter.
+        read_state() { grep -m1 "^$$1=" /state/sim.env 2>/dev/null \
+                         | cut -d= -f2- | tr -d '\r' ; }
+        run_sql() { /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa \
+                      -P "$$MSSQL_SA_PASSWORD" -d bhs -b "$$@" ; }
+        LAST_PURGE=0
+        while true; do
+          TARGET=$$(read_state TARGET_ACTIVE_SQL)
+          PHANTOM=$$(read_state PHANTOM_RATE_PER_TICK)
+          FROZEN=$$(read_state FREEZE_INSERTS)
+          PURGE=$$(read_state PURGE_REQUEST)
+
+          if [ -n "$$TARGET" ]; then
+            if [ "$$FROZEN" = "on" ]; then FREEZE=1; OFFSET=-7; else FREEZE=0; OFFSET=0; fi
+            # Parameters passed through the environment: sqlcmd resolves
+            # $(name) from it just as well as with -v, which this version
+            # rejects. Exported explicitly rather than prefixed, as a prefix
+            # does not apply cleanly to a shell function.
+            export target_active="$${TARGET:-142}"
+            export phantom_rate="$${PHANTOM:-0}"
+            export freeze="$$FREEZE"
+            export created_offset="$$OFFSET"
+            run_sql -i /sql/sim-tick.sql > /tmp/tick.log 2>&1 \
+              || echo "[simulator] tick failed: $$(tail -2 /tmp/tick.log)"
+          fi
+
+          if [ -n "$$PURGE" ] && [ "$$PURGE" != "$$LAST_PURGE" ]; then
+            echo "[simulator] purging phantom bags"
+            run_sql -i /sql/sim-purge-phantoms.sql 2>&1 | tail -3 || true
+            LAST_PURGE="$$PURGE"
+          fi
+
+          sleep 5
+        done
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:9.5.15
+    container_name: bhs-grafana
+    depends_on:
+      mock-api:
+        condition: service_started
+    environment:
+      GF_INSTALL_PLUGINS: "yesoreyeram-infinity-datasource 2.11.4"
+      # Local bench: anonymous access so that a screenshot does not have to go
+      # through a login form. Not something to reproduce in production.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      # Admin: the bench is local, and this allows editing the panels directly
+      # in Grafana to try out a variant.
+      GF_AUTH_ANONYMOUS_ORG_ROLE: ${GF_ANON_ROLE:-Admin}
+      GF_AUTH_BASIC_ENABLED: "false"
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_USERS_DEFAULT_THEME: "dark"
+      GF_LOG_LEVEL: "warn"
+      # Consumed by the datasource provisioning.
+      SQL_READONLY_PASSWORD: ${SQL_READONLY_PASSWORD}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      # Host port is configurable: 3000 is often already taken by another
+      # project. Grafana always listens on 3000 inside the container.
+      - "${BIND_ADDRESS:-127.0.0.1}:${GRAFANA_PORT:-3000}:3000"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: bhs-bench

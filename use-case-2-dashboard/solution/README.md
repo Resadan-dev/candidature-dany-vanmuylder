@@ -171,7 +171,7 @@ l'ancienneté du dernier lot inséré détecte les deux cas, et se calcule côt�
 serveur, donc sans dépendre de l'horloge de la TV.
 
 ![Bannière DATA STALE](images/dashboard-stale.png)
-*Le second mode de panne, reproduit sur le banc de test : inserts arrêtés
+*Le second mode de panne, reproduit sur le test bench : inserts arrêtés
 depuis plus de 5 min. L'API répond toujours (« 142 bagages », en vert), mais
 la bannière SQL a basculé toute seule et rebasculera seule au
 rétablissement.*

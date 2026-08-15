@@ -13,5 +13,9 @@ Thumbs.db
 # Réglages locaux de l'outillage
 .claude/
 
-# Banc de test local du dashboard : outil de travail, hors livrables
-use-case-2-dashboard/solution/banc-de-test/
+# Test bench (bonus) : le dossier est versionné, mais pas ce qu'il génère
+# à l'exécution. Voir aussi test-bench/.gitignore.
+test-bench/.env
+test-bench/state/
+test-bench/dist/
+test-bench/grafana/dashboards/

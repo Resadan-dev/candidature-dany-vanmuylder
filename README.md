@@ -13,6 +13,12 @@ that is where the approach lives.
 | **1: The Phantom Bag** | Debugging, root cause analysis, monitoring | **[use-case-1-phantom-bag/solution/README.md](use-case-1-phantom-bag/solution/README.md)** |
 | **2: The Dashboard Request** | System design, integration, trade-offs | **[use-case-2-dashboard/solution/README.md](use-case-2-dashboard/solution/README.md)** |
 
+**Bonus, outside the scope and the 4 hours of the assessment**: a runnable
+simulation of the use case 2 dashboard: a Docker stack and a web console that
+drive it through morning rushes, outages and the use case 1 defect, live.
+See **[test-bench/README.md](test-bench/README.md)**, or the
+[section below](#bonus--simulation-console).
+
 In two sentences each, to set the scene:
 
 - **Use case 1.** The root cause is a non-unique buffer key: the first four
@@ -38,18 +44,40 @@ In two sentences each, to set the scene:
 │       ├── diagrams/                 ← 3 Mermaid diagrams
 │       └── tests/                    ← 6 pytest tests
 │
-└── use-case-2-dashboard/
-    ├── (assessment files: constraints.md, data_sources.md, ...)
-    └── solution/
-        ├── README.md                 ← architecture proposal
-        ├── architecture.md           ← data flows and firewall rules
-        ├── diagrams/                 ← Mermaid data-flow diagram
-        ├── dashboard.json            ← importable into Grafana 9.5
-        ├── apercu-dashboard.html     ← dashboard preview, nothing to install
-        ├── queries.sql               ← corrected SQL queries
-        ├── nginx.conf                ← reverse proxy
-        └── images/                   ← screenshots from the test bench
+├── use-case-2-dashboard/
+│   ├── (assessment files: constraints.md, data_sources.md, ...)
+│   └── solution/
+│       ├── README.md                 ← architecture proposal
+│       ├── architecture.md           ← data flows and firewall rules
+│       ├── diagrams/                 ← Mermaid data-flow diagram
+│       ├── dashboard.json            ← importable into Grafana 9.5
+│       ├── apercu-dashboard.html     ← dashboard preview, nothing to install
+│       ├── queries.sql               ← corrected SQL queries
+│       ├── nginx.conf                ← reverse proxy
+│       └── images/                   ← screenshots from the test bench
+│
+└── test-bench/                       ← BONUS, out of scope (see below)
 ```
+
+## Bonus: simulation console
+
+**Out of scope, and built outside the 4 hours the assessment allows.** The two
+use cases above are the submission; this came after, because a dashboard is
+hard to judge from two still images.
+
+[`test-bench/`](test-bench/) is a Docker stack that runs the delivered
+`dashboard.json` against a real SQL Server and a mocked BHS API, plus a web
+console that drives the simulation: traffic sliders, failure injection, and a
+switch that turns the use case 1 bug on and off.
+
+![Simulation console](test-bench/images/simulation-console.png)
+
+It makes visible what the write-up can only assert: that the banner is backed
+by SQL and survives an API outage, that an idle night reads differently from a
+broken feed, and that the phantom-bag defect gets worse as throughput rises.
+The two screenshots in the use case 2 README were produced with it.
+
+Details and how to run it: [test-bench/README.md](test-bench/README.md).
 
 ## Check it for yourself
 

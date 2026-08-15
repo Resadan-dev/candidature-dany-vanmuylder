@@ -1,0 +1,35 @@
+# The two sources of the dashboard. The UIDs reuse the __inputs names of
+# dashboard.json (DS_BHS_API, DS_BHS_SQL), so scripts/prepare-dashboard.py
+# only has to replace ${DS_BHS_API} with DS_BHS_API, rewriting nothing else
+# of the delivered file.
+
+apiVersion: 1
+
+datasources:
+
+  - name: BHS-API
+    uid: DS_BHS_API
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    isDefault: true
+    jsonData:
+      auth_method: none
+      # The dashboard calls api.nce-bhs.local:8080, the network alias of the
+      # mock-api container (see docker-compose.yml).
+      allowedHosts:
+        - http://api.nce-bhs.local:8080
+
+  - name: BHS-SQL
+    uid: DS_BHS_SQL
+    type: mssql
+    access: proxy
+    url: sqlserver:1433
+    database: bhs
+    user: svc_readonly
+    jsonData:
+      maxOpenConns: 10
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+      encrypt: "false"
+    secureJsonData:
+      password: $SQL_READONLY_PASSWORD

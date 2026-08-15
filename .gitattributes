@@ -1,0 +1,23 @@
+# Fins de ligne.
+#
+# Ce dépôt est travaillé sous Windows avec core.autocrlf=true : sans ces
+# règles, un clone récupère des fichiers en CRLF. C'est sans conséquence pour
+# un .md, mais un script shell dont les lignes finissent par \r n'est pas
+# exécutable — bash lit « cd /chemin\r » et échoue — et les scripts montés
+# dans un conteneur Linux subissent le même sort.
+
+# Tout ce qui est exécuté ou lu côté Linux garde des LF.
+*.sh        text eol=lf
+*.sql       text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.py        text eol=lf
+.env.example text eol=lf
+
+# PowerShell : CRLF, la convention de sa plateforme.
+*.ps1       text eol=crlf
+
+# Binaires : aucune conversion.
+*.png       binary
+*.jpg       binary
+*.db        binary
